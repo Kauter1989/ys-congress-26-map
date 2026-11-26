@@ -1,4 +1,4 @@
-/* КМУ-2026 · Планировщик деловой программы — чистая логика (без DOM).
+/* КМУ-2026 - Интерактивная деловая программа — чистая логика (без DOM).
  * Работает в браузере (window.KmuCore) и в Node (module.exports) для тестов. */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
