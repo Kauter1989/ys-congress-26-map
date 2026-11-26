@@ -2,7 +2,8 @@
    Темы оформления в стилистике Конгресса (переключатель в шапке):
    - kmu      — фирменный фон Конгресса (оригинальная текстура), спокойный индиго
    - graphite — нейтральный графит, максимальная читаемость
-   - polar    — мягкая полярная ночь, приглушённый navy
+   - polar    — мягкая полярная ночь, приглушённый navy (по умолчанию)
+   - light    — светлая тема в цветах Конгресса
    - neon     — прежняя неоновая версия (для любителей поярче) */
 
 :root {
@@ -118,6 +119,64 @@ body[data-theme="polar"] {
   --shadow: 0 2px 10px rgba(4, 8, 18, .5);
   --shadow-lg: 0 12px 50px rgba(4, 8, 18, .7);
 }
+
+/* ---------- Тема: Светлая ---------- */
+body[data-theme="light"] {
+  --bg: #eef2f8;
+  --bg-image:
+    radial-gradient(900px 420px at 85% -10%, rgba(44, 144, 247, .08), transparent 60%),
+    linear-gradient(180deg, #f6f9fd, #eef2f8 45%);
+  --bg-size: auto;
+  --bg-repeat: no-repeat;
+  --grid-display: none;
+  --surface: #ffffff;
+  --surface-solid: #ffffff;
+  --surface-2: #f2f6fc;
+  --text: #182338;
+  --muted: #5b6b85;
+  --line: rgba(23, 35, 59, .12);
+  --line-strong: rgba(23, 35, 59, .3);
+  --accent: #0f8fa0;
+  --accent-2: #2274b8;
+  --glow: #0c7f8c;
+  --grad: linear-gradient(85deg, #1f6fb0, #158a96);
+  --a12: rgba(15, 143, 160, .1);
+  --a20: rgba(15, 143, 160, .16);
+  --a35: rgba(15, 143, 160, .25);
+  --a45: rgba(15, 143, 160, .4);
+  --g20: rgba(12, 127, 140, .2);
+  --g45: rgba(12, 127, 140, .35);
+  --b16: rgba(34, 116, 184, .12);
+  --sel-border: rgba(15, 143, 160, .6);
+  --sel-bg: linear-gradient(160deg, rgba(15, 143, 160, .08), rgba(34, 116, 184, .05));
+  --sel-shadow: 0 0 0 1px rgba(15, 143, 160, .45), 0 0 14px rgba(15, 143, 160, .2);
+  --shadow: 0 1px 3px rgba(23, 35, 59, .08), 0 4px 14px rgba(23, 35, 59, .06);
+  --shadow-lg: 0 12px 40px rgba(23, 35, 59, .18);
+  --danger: #d92d4a;
+  --danger-soft: rgba(217, 45, 74, .08);
+  --d30: rgba(217, 45, 74, .3);
+  --tk-platform: #1f6fb0;
+  --tk-challenges: #6d3fd4;
+  --tk-borders: #0c8a96;
+  --tk-initiatives: #c77400;
+  --tk-rsf: #d92d4a;
+  --tk-other: #5b6b85;
+}
+body[data-theme="light"] .site-header { background: rgba(255, 255, 255, .78); }
+body[data-theme="light"] .toolbar { background: rgba(246, 249, 253, .88); }
+body[data-theme="light"] .site-footer { background: rgba(255, 255, 255, .6); }
+body[data-theme="light"] .day-tab.active,
+body[data-theme="light"] .chip.active,
+body[data-theme="light"] .slot-time,
+body[data-theme="light"] .btn-primary,
+body[data-theme="light"] .filter-count,
+body[data-theme="light"] .brand-mark { color: #fff; }
+body[data-theme="light"] .card.selected::after { color: #fff; }
+body[data-theme="light"] .grid-card .g-star { background: rgba(255, 255, 255, .85); }
+body[data-theme="light"] .badge.domain-badge { color: #1f6fb0; }
+body[data-theme="light"] .badge.format-badge { color: #9a5b00; }
+body[data-theme="light"] .conflict-note { color: #b42338; }
+body[data-theme="light"] .modal-backdrop { background: rgba(23, 35, 59, .45); }
 
 /* ---------- Тема: Неон (прежняя) ---------- */
 body[data-theme="neon"] {
