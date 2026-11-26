@@ -321,6 +321,8 @@ def parse(pdf_path):
         # первая строка страницы: смотрим вперёд — есть ли заголовок (bold 9)
         j = i + 1
         ok = False
+        if ln['text'].startswith('При поддержке'):
+            continue
         while j < len(stream) and j - i <= 4:
             l2 = stream[j]['ln']
             if l2['bold'] and l2['fs'] == 9.0:
@@ -367,6 +369,8 @@ def parse(pdf_path):
         series_lines = []
         title_lines = []
         desc_parts = []
+        note_lines = []
+        note_mode = False
         last_desc_y = None
         venue_lines = ev['_venue']
 
@@ -385,6 +389,16 @@ def parse(pdf_path):
             t = ln['text']
             y = ln['y']
             if not t:
+                continue
+            # спонсорская пометка «При поддержке …» (bold 8) — отдельное поле, не описание
+            if note_mode:
+                if t[0].islower() and ln['fs'] == 8.0 and ln['x'] < 215 and not ln['sym']:
+                    note_lines.append(t)
+                    continue
+                note_mode = False
+            if ln['fs'] == 8.0 and ln['x'] < 215 and not ln['sym'] and t.startswith('При поддержке'):
+                note_lines.append(t)
+                note_mode = True
                 continue
             if phase == 'track':
                 if ln['bold'] and ln['fs'] == 9.0:
@@ -483,6 +497,7 @@ def parse(pdf_path):
         flush_person()
         ev['title'] = norm_space(' '.join(title_lines))
         ev['series'] = norm_space(' '.join(series_lines))
+        ev['note'] = norm_space(' '.join(note_lines))
         ev['description'] = norm_space(' '.join(desc_parts))
         room = norm_space(' '.join(venue_lines))
         if room.lower().startswith('конгресс-центр'):

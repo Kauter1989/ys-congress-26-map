@@ -173,6 +173,7 @@
   function eventDescription(ev, meta) {
     var lines = [];
     if (ev.series) lines.push(ev.series);
+    if (ev.note) lines.push(ev.note);
     if (ev.track) lines.push('Трек: ' + ev.track);
     if (ev.format) lines.push('Формат: ' + ev.format);
     if (ev.description) lines.push(ev.description);

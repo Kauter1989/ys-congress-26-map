@@ -485,6 +485,7 @@
       domainBadges(ev, 6) + conflictBadge(ev, conflicts) + '</div>' +
       '<h2 class="m-title" id="modal-title">' + esc(ev.title) + '</h2>' +
       (ev.series ? '<p class="m-series">' + esc(ev.series) + '</p>' : '') +
+      (ev.note ? '<p class="m-series">' + esc(ev.note) + '</p>' : '') +
       '<div class="m-facts">' +
       '<div class="m-fact">' + icon('clock') + '<div><b>Когда</b>' + esc(C.formatDate(ev.date, true)) + ', ' + ev.start + '–' + ev.end + ' (' + C.durationText(ev) + ', МСК)</div></div>' +
       '<div class="m-fact">' + icon('pin') + '<div><b>Где</b>' + esc(ev.venue || 'уточняется') + '</div></div>' +

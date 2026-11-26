@@ -261,7 +261,7 @@
       y += 7;
 
       para(ev.title, 14, 'bold', TEXT, 6.5, 2);
-      var metaLine = [ev.series, ev.track, ev.format].filter(Boolean).join(' · ');
+      var metaLine = [ev.series, ev.note, ev.track, ev.format].filter(Boolean).join(' · ');
       if (metaLine) para(metaLine, 9, 'normal', BLUE, 4.5, 2);
       if (conflicts.map[ev.id]) {
         var names = conflicts.map[ev.id].map(function (id) {
