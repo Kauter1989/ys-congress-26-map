@@ -16,12 +16,16 @@
 
   /* ---------- Треки ---------- */
   var TRACKS = [
-    { key: 'platform', name: 'Платформа развития: люди, среда, инструменты', short: 'Платформа развития', css: 'tk-platform', color: '#2563eb' },
-    { key: 'challenges', name: 'Большие вызовы научно-технологического развития', short: 'Большие вызовы', css: 'tk-challenges', color: '#7c3aed' },
-    { key: 'borders', name: 'Наука без границ: идеи, открытия, решения', short: 'Наука без границ', css: 'tk-borders', color: '#0d9488' },
-    { key: 'initiatives', name: 'Инициативы Десятилетия науки и технологий', short: 'Инициативы Десятилетия', css: 'tk-initiatives', color: '#ea580c' },
-    { key: 'rsf', name: 'Школа РНФ', short: 'Школа РНФ', css: 'tk-rsf', color: '#dc2626' }
+    { key: 'platform', name: 'Платформа развития: люди, среда, инструменты', short: 'Платформа развития', css: 'tk-platform', color: '#2c90f7' },
+    { key: 'challenges', name: 'Большие вызовы научно-технологического развития', short: 'Большие вызовы', css: 'tk-challenges', color: '#8b5cf6' },
+    { key: 'borders', name: 'Наука без границ: идеи, открытия, решения', short: 'Наука без границ', css: 'tk-borders', color: '#05c0cc' },
+    { key: 'initiatives', name: 'Инициативы Десятилетия науки и технологий', short: 'Инициативы Десятилетия', css: 'tk-initiatives', color: '#ffb020' },
+    { key: 'rsf', name: 'Школа РНФ', short: 'Школа РНФ', css: 'tk-rsf', color: '#ff5470' }
   ];
+  function textColorFor(hex) {
+    var r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+    return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 > 0.55 ? '#06121f' : '#ffffff';
+  }
   var TRACK_BY_NAME = {};
   TRACKS.forEach(function (t) { TRACK_BY_NAME[t.name] = t; });
   function trackOf(ev) { return TRACK_BY_NAME[ev.track] || null; }
@@ -213,9 +217,9 @@
 
   function trackBadge(ev) {
     var t = trackOf(ev);
-    if (t) return '<span class="badge track-badge" style="background:' + t.color + '" title="' + esc(t.name) + '">' + esc(t.short) + '</span>';
-    if (ev.series) return '<span class="badge track-badge" style="background:#64748b" title="' + esc(ev.series) + '">Серия</span>';
-    return '<span class="badge track-badge" style="background:#64748b">Спецсобытие</span>';
+    if (t) return '<span class="badge track-badge" style="background:' + t.color + ';color:' + textColorFor(t.color) + '" title="' + esc(t.name) + '">' + esc(t.short) + '</span>';
+    if (ev.series) return '<span class="badge track-badge" style="background:#7c8db5;color:#06121f" title="' + esc(ev.series) + '">Серия</span>';
+    return '<span class="badge track-badge" style="background:#7c8db5;color:#06121f">Спецсобытие</span>';
   }
 
   function listCard(ev, conflicts) {
@@ -323,7 +327,7 @@
     });
     html += '<div class="grid-legend">' + TRACKS.map(function (t) {
       return '<span class="lg"><span class="dot" style="background:' + t.color + '"></span>' + esc(t.short) + '</span>';
-    }).join('') + '<span class="lg"><span class="dot" style="background:#64748b"></span>Другие / спецсобытия</span></div>';
+    }).join('') + '<span class="lg"><span class="dot" style="background:#7c8db5"></span>Другие / спецсобытия</span></div>';
     return html;
   }
 
@@ -540,9 +544,14 @@
   /* ---------- Избранное ---------- */
   function toggleSelected(id) {
     var i = state.selected.indexOf(id);
-    if (i === -1) { state.selected.push(id); toast('Добавлено в избранное'); }
+    var added = i === -1;
+    if (added) { state.selected.push(id); toast('Добавлено в избранное'); }
     else { state.selected.splice(i, 1); toast('Убрано из избранного'); }
     render();
+    if (added) {
+      var el = content.querySelector('[data-id="' + id + '"]');
+      if (el) { el.classList.add('just-selected'); }
+    }
     if (!modal.hidden) openEvent(id);
   }
 
