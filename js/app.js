@@ -345,6 +345,7 @@
       (sel.length ? ' <span style="color:var(--muted)">· ' + Math.floor(totalMin / 60) + ' ч ' + (totalMin % 60) + ' мин суммарно</span>' : '') + '</div>' +
       (sel.length ?
         '<button type="button" class="btn btn-primary" id="fav-gcal">' + icon('cal') + ' Добавить в календарь</button>' +
+        '<button type="button" class="btn" id="fav-pdf">' + icon('pdf') + ' Сохранить в PDF</button>' +
         '<button type="button" class="btn btn-danger" id="fav-clear">' + icon('trash') + ' Очистить</button>' : '') +
       '</div>';
 
@@ -695,6 +696,15 @@
     var open = e.target.closest('[data-open]');
     if (open) { openEvent(open.getAttribute('data-open')); return; }
     if (e.target.closest('#fav-gcal')) { openIcsModal(selectedEvents()); return; }
+    if (e.target.closest('#fav-pdf')) {
+      var selPdf = selectedEvents();
+      toast('Готовим PDF…');
+      window.KmuPdf.downloadPdf(selPdf, meta, C.findConflicts(selPdf)).then(
+        function () { toast('PDF сохранён (' + selPdf.length + ' меропр.)'); },
+        function (err) { toast('Не удалось создать PDF'); if (window.console) console.error(err); }
+      );
+      return;
+    }
     if (e.target.closest('#fav-clear')) {
       if (confirm('Убрать все мероприятия из избранного?')) { state.selected = []; render(); }
       return;
