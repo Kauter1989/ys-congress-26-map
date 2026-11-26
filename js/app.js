@@ -43,6 +43,7 @@
   var state = {
     day: 'all',
     view: window.innerWidth >= 1000 ? 'grid' : 'list',
+    theme: 'kmu',
     query: '',
     tracks: [],
     domains: [],
@@ -55,6 +56,7 @@
     if (saved) {
       if (saved.day) state.day = saved.day;
       if (saved.view === 'grid' || saved.view === 'list') state.view = saved.view;
+      if (['kmu', 'graphite', 'polar', 'neon'].indexOf(saved.theme) !== -1) state.theme = saved.theme;
       if (typeof saved.query === 'string') state.query = saved.query;
       ['tracks', 'domains', 'formats', 'speakers', 'selected'].forEach(function (k) {
         if (Array.isArray(saved[k])) state[k] = saved[k];
@@ -740,11 +742,24 @@
     if (state.day !== prevDay || state.view !== prevView) render();
   });
 
+  /* ---------- Тема ---------- */
+  function applyTheme() {
+    document.body.setAttribute('data-theme', state.theme);
+    var sel = $('theme-select');
+    if (sel) sel.value = state.theme;
+  }
+  $('theme-select').addEventListener('change', function () {
+    state.theme = this.value;
+    applyTheme();
+    persist();
+  });
+
   /* ---------- Инициализация ---------- */
   function init() {
     var asOf = meta.source && meta.source.asOf ? meta.source.asOf.split('-').reverse().join('.') : '';
     $('asof-badge').textContent = 'Программа от ' + asOf;
     $('footer-asof').textContent = asOf;
+    applyTheme();
     buildFilterControls();
     applyHash();
     render();

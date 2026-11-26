@@ -34,6 +34,7 @@
   <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 3v2h3.6l-8.3 8.3 1.4 1.4L19 6.4V10h2V3h-7zM5 5v14h14v-7h-2v5H7V7h5V5H5z"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M9.5 16.2L5.3 12l-1.4 1.4 5.6 5.6 12-12-1.4-1.4-10.6 10.6z"/></symbol>
   <symbol id="i-trash" viewBox="0 0 24 24"><path d="M9 3h6l1 2h4v2H4V5h4l1-2zM6 8h12l-1 13H7L6 8zm4 2v9h1v-9h-1zm3 0v9h1v-9h-1z"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0 0 20 2.5 2.5 0 0 0 2.5-2.5c0-.6-.2-1.1-.6-1.6-.4-.4-.6-1-.6-1.5A2.5 2.5 0 0 1 15.8 14H18a4 4 0 0 0 4-4c0-4.4-4.5-8-10-8zm-5.5 9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3-4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3 4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></symbol>
 </svg>
 
 <header class="site-header">
@@ -46,6 +47,15 @@
       </div>
     </div>
     <div class="header-side">
+      <label class="theme-box" title="Тема оформления">
+        <svg class="ic"><use href="#i-palette"/></svg>
+        <select id="theme-select" aria-label="Тема оформления">
+          <option value="kmu">КМУ</option>
+          <option value="graphite">Графит</option>
+          <option value="polar">Полярная ночь</option>
+          <option value="neon">Неон</option>
+        </select>
+      </label>
       <span class="asof" id="asof-badge" title="Источник данных"></span>
       <a class="official-link" href="https://science-congress.com/" target="_blank" rel="noopener">
         Официальный сайт <svg class="ic"><use href="#i-external"/></svg>
