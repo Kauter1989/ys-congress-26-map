@@ -280,6 +280,48 @@
   var COL_W = 236;
   var COL_GAP = 8;
 
+  function gridDayHtml(d, dayEvents, conflicts) {
+    var minStart = Math.min.apply(null, dayEvents.map(C.startMin));
+    var maxEnd = Math.max.apply(null, dayEvents.map(C.endMin));
+    var dayStart = Math.floor(minStart / 60) * 60;
+    var dayEnd = Math.ceil(maxEnd / 60) * 60;
+    var height = (dayEnd - dayStart) * PPM;
+    var layout = C.layoutColumns(dayEvents);
+    var width = layout.cols * (COL_W + COL_GAP) + COL_GAP;
+
+    var gutter = '';
+    var lines = '';
+    for (var m = dayStart; m <= dayEnd; m += 30) {
+      var y = (m - dayStart) * PPM;
+      var isHour = m % 60 === 0;
+      if (isHour && m < dayEnd) gutter += '<span class="gutter-label" style="top:' + y + 'px">' + C.minutesToHHMM(m) + '</span>';
+      if (m < dayEnd) lines += '<div class="hour-line' + (isHour ? '' : ' half') + '" style="top:' + y + 'px"></div>';
+    }
+
+    var cards = dayEvents.map(function (ev) {
+      var col = layout.byId[ev.id].col;
+      var top = (C.startMin(ev) - dayStart) * PPM + 1;
+      var h = Math.max((C.endMin(ev) - C.startMin(ev)) * PPM - 3, 26);
+      var left = COL_GAP + col * (COL_W + COL_GAP);
+      var sel = state.selected.indexOf(ev.id) !== -1;
+      var conf = conflicts.map[ev.id];
+      var compact = h < 64;
+      return '<div class="grid-card ' + trackCss(ev) + (sel ? ' selected' : '') + (conf ? ' conflicted' : '') + '" ' +
+        'style="top:' + top + 'px;left:' + left + 'px;width:' + COL_W + 'px;height:' + h + 'px" ' +
+        'data-open="' + ev.id + '" tabindex="0" role="button" title="' + esc(ev.title) + '">' +
+        '<div class="g-time">' + ev.start + '–' + ev.end +
+        (conf ? '<span class="g-conflict" style="position:static">' + icon('alert') + '</span>' : '') + '</div>' +
+        '<div class="g-title">' + esc(ev.title) + '</div>' +
+        (compact ? '' : '<div class="g-room">' + esc(ev.room || ev.venue || '') + '</div>') +
+        '<button type="button" class="g-star' + (sel ? ' on' : '') + '" data-star="' + ev.id + '" aria-pressed="' + sel + '" title="' + (sel ? 'Убрать из избранного' : 'В избранное') + '">' + icon('star') + '</button>' +
+        '</div>';
+    }).join('');
+
+    return '<div class="grid-wrap"><div class="time-gutter" style="height:' + height + 'px">' + gutter + '</div>' +
+      '<div class="grid-canvas" style="height:' + height + 'px;width:' + width + 'px">' + lines + cards + '</div></div>' +
+      '<div class="grid-hint">Вертикальный таймлайн дня: плитки расположены по времени. Клик по плитке — подробности.</div>';
+  }
+
   function renderGrid(list, conflicts) {
     if (!list.length) return emptyState();
     var byDate = {};
@@ -287,48 +329,10 @@
     var html = '';
     Object.keys(byDate).sort().forEach(function (d) {
       var dayEvents = byDate[d];
-      var minStart = Math.min.apply(null, dayEvents.map(C.startMin));
-      var maxEnd = Math.max.apply(null, dayEvents.map(C.endMin));
-      var dayStart = Math.floor(minStart / 60) * 60;
-      var dayEnd = Math.ceil(maxEnd / 60) * 60;
-      var height = (dayEnd - dayStart) * PPM;
       var layout = C.layoutColumns(dayEvents);
-      var width = layout.cols * (COL_W + COL_GAP) + COL_GAP;
-
-      var gutter = '';
-      var lines = '';
-      for (var m = dayStart; m <= dayEnd; m += 30) {
-        var y = (m - dayStart) * PPM;
-        var isHour = m % 60 === 0;
-        if (isHour && m < dayEnd) gutter += '<span class="gutter-label" style="top:' + y + 'px">' + C.minutesToHHMM(m) + '</span>';
-        if (m < dayEnd) lines += '<div class="hour-line' + (isHour ? '' : ' half') + '" style="top:' + y + 'px"></div>';
-      }
-
-      var cards = dayEvents.map(function (ev) {
-        var col = layout.byId[ev.id].col;
-        var top = (C.startMin(ev) - dayStart) * PPM + 1;
-        var h = Math.max((C.endMin(ev) - C.startMin(ev)) * PPM - 3, 26);
-        var left = COL_GAP + col * (COL_W + COL_GAP);
-        var sel = state.selected.indexOf(ev.id) !== -1;
-        var conf = conflicts.map[ev.id];
-        var compact = h < 64;
-        return '<div class="grid-card ' + trackCss(ev) + (sel ? ' selected' : '') + (conf ? ' conflicted' : '') + '" ' +
-          'style="top:' + top + 'px;left:' + left + 'px;width:' + COL_W + 'px;height:' + h + 'px" ' +
-          'data-open="' + ev.id + '" tabindex="0" role="button" title="' + esc(ev.title) + '">' +
-          '<div class="g-time">' + ev.start + '–' + ev.end +
-          (conf ? '<span class="g-conflict" style="position:static">' + icon('alert') + '</span>' : '') + '</div>' +
-          '<div class="g-title">' + esc(ev.title) + '</div>' +
-          (compact ? '' : '<div class="g-room">' + esc(ev.room || ev.venue || '') + '</div>') +
-          '<button type="button" class="g-star' + (sel ? ' on' : '') + '" data-star="' + ev.id + '" aria-pressed="' + sel + '" title="' + (sel ? 'Убрать из избранного' : 'В избранное') + '">' + icon('star') + '</button>' +
-          '</div>';
-      }).join('');
-
       html += '<section class="grid-day"><div class="day-heading"><h2>' + esc(C.formatDate(d, true)) + '</h2>' +
         '<span class="sub">' + dayEvents.length + ' меропр. · ' + layout.cols + ' параллельных потоков</span></div>' +
-        '<div class="grid-wrap"><div class="time-gutter" style="height:' + height + 'px">' + gutter + '</div>' +
-        '<div class="grid-canvas" style="height:' + height + 'px;width:' + width + 'px">' + lines + cards + '</div></div>' +
-        '<div class="grid-hint">Сетка показывает все параллельные потоки дня. Прокручивайте по горизонтали; клик по карточке — подробности.</div>' +
-        '</section>';
+        gridDayHtml(d, dayEvents, conflicts) + '</section>';
     });
     html += '<div class="grid-legend">' + TRACKS.map(function (t) {
       return '<span class="lg"><span class="dot" style="background:' + t.color + '"></span>' + esc(t.short) + '</span>';
@@ -377,7 +381,9 @@
         '<div class="fav-day-head"><span class="fav-day-date">' + esc(full[0]) + '</span>' +
         '<span class="fav-day-wd">' + esc(full[1] || '') + '</span>' +
         '<span class="fav-day-cnt">' + dayEvents.length + ' меропр. · ' + Math.floor(mins / 60) + ' ч ' + (mins % 60) + ' мин</span></div>' +
-        '<div class="fav-day-body">' + slotsHtml(dayEvents, conflicts) + '</div></section>';
+        '<div class="fav-day-body">' + gridDayHtml(d, dayEvents, conflicts) +
+        (state.view === 'list' ? '<div class="fav-cards">' + slotsHtml(dayEvents, conflicts) + '</div>' : '') +
+        '</div></section>';
     });
     return html;
   }

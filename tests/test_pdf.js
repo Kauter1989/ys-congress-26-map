@@ -30,5 +30,5 @@ fs.writeFileSync(out, buf);
 assert(buf.slice(0, 5).toString() === '%PDF-', 'PDF header');
 assert(buf.length > 30000, 'PDF size > 30KB, got ' + buf.length);
 const pages = doc.getNumberOfPages();
-assert(pages >= 2, 'multipage, got ' + pages);
-console.log('PDF ok:', buf.length, 'bytes,', pages, 'pages ->', out);
+assert(pages >= 2 + sel.length, 'title + overview(s) + detail pages, got ' + pages);
+console.log('PDF ok:', buf.length, 'bytes,', pages, 'pages (титул + обзоры + ' + sel.length + ' деталей) ->', out);

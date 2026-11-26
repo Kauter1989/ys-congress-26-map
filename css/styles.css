@@ -481,6 +481,8 @@ select#format-select option { background: var(--surface-solid); color: var(--tex
 .fav-day-wd { color: var(--muted); font-size: 13px; }
 .fav-day-cnt { margin-left: auto; color: var(--muted); font-size: 12.5px; }
 .fav-day-body { padding: 14px 16px 6px; }
+.fav-day-body .grid-wrap { background: transparent; border-color: var(--line); box-shadow: none; }
+.fav-cards { margin-top: 16px; }
 .btn {
   display: inline-flex; align-items: center; gap: 7px; border-radius: 10px; padding: 9px 15px;
   font-size: 13px; font-weight: 700; border: 1px solid var(--line); background: var(--surface); color: var(--text);
