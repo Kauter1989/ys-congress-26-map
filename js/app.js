@@ -251,6 +251,16 @@
   }
 
   /* ---------- Список ---------- */
+  function slotsHtml(dayEvents, conflicts) {
+    var slots = {};
+    dayEvents.forEach(function (e) { var k = e.start + '–' + e.end; (slots[k] = slots[k] || []).push(e); });
+    return Object.keys(slots).sort(function (a, b) { return C.toMinutes(a.split('–')[0]) - C.toMinutes(b.split('–')[0]); }).map(function (k) {
+      return '<div class="slot-group"><div class="slot-head"><span class="slot-time">' + k + '</span>' +
+        '<span class="slot-cnt">' + slots[k].length + ' в этом слоте</span></div>' +
+        '<div class="cards">' + slots[k].map(function (e) { return listCard(e, conflicts); }).join('') + '</div></div>';
+    }).join('');
+  }
+
   function renderList(list, conflicts) {
     if (!list.length) return emptyState();
     var byDate = {};
@@ -259,15 +269,8 @@
     Object.keys(byDate).sort().forEach(function (d) {
       var dayEvents = byDate[d].sort(function (a, b) { return C.startMin(a) - C.startMin(b) || a.id.localeCompare(b.id); });
       html += '<section class="day-section"><div class="day-heading"><h2>' + esc(C.formatDate(d, true)) + '</h2>' +
-        '<span class="sub">' + dayEvents.length + ' меропр.</span></div>';
-      var slots = {};
-      dayEvents.forEach(function (e) { var k = e.start + '–' + e.end; (slots[k] = slots[k] || []).push(e); });
-      Object.keys(slots).sort(function (a, b) { return C.toMinutes(a.split('–')[0]) - C.toMinutes(b.split('–')[0]); }).forEach(function (k) {
-        html += '<div class="slot-group"><div class="slot-head"><span class="slot-time">' + k + '</span>' +
-          '<span class="slot-cnt">' + slots[k].length + ' в этом слоте</span></div>' +
-          '<div class="cards">' + slots[k].map(function (e) { return listCard(e, conflicts); }).join('') + '</div></div>';
-      });
-      html += '</section>';
+        '<span class="sub">' + dayEvents.length + ' меропр.</span></div>' +
+        slotsHtml(dayEvents, conflicts) + '</section>';
     });
     return html;
   }
@@ -341,8 +344,7 @@
       '<div class="grow"><b>Выбрано: ' + sel.length + '</b>' +
       (sel.length ? ' <span style="color:var(--muted)">· ' + Math.floor(totalMin / 60) + ' ч ' + (totalMin % 60) + ' мин суммарно</span>' : '') + '</div>' +
       (sel.length ?
-        '<button type="button" class="btn btn-primary" id="fav-ics">' + icon('download') + ' Скачать .ics (' + sel.length + ')</button>' +
-        '<button type="button" class="btn" id="fav-gcal">' + icon('cal') + ' Google Calendar — все</button>' +
+        '<button type="button" class="btn btn-primary" id="fav-gcal">' + icon('cal') + ' Добавить в календарь</button>' +
         '<button type="button" class="btn btn-danger" id="fav-clear">' + icon('trash') + ' Очистить</button>' : '') +
       '</div>';
 
@@ -359,11 +361,23 @@
 
     if (!sel.length) {
       html += '<div class="empty-state"><div class="big">☆</div><h3>Пока пусто</h3>' +
-        '<p>Отмечайте мероприятия звёздочкой в программе — они появятся здесь.<br>Потом их можно выгрузить в Google Calendar все сразу.</p>' +
+        '<p>Отмечайте мероприятия звёздочкой в программе — они появятся здесь.<br>Потом их можно добавить в календарь все сразу.</p>' +
         '<button type="button" class="btn btn-primary" data-day="all" style="margin-top:10px">Перейти к программе</button></div>';
       return html;
     }
-    html += renderList(sel, conflicts);
+
+    var byDate = {};
+    sel.forEach(function (e) { (byDate[e.date] = byDate[e.date] || []).push(e); });
+    Object.keys(byDate).sort().forEach(function (d) {
+      var dayEvents = byDate[d];
+      var mins = dayEvents.reduce(function (s, e) { return s + C.endMin(e) - C.startMin(e); }, 0);
+      var full = C.formatDate(d, true).split(', ');
+      html += '<section class="fav-day">' +
+        '<div class="fav-day-head"><span class="fav-day-date">' + esc(full[0]) + '</span>' +
+        '<span class="fav-day-wd">' + esc(full[1] || '') + '</span>' +
+        '<span class="fav-day-cnt">' + dayEvents.length + ' меропр. · ' + Math.floor(mins / 60) + ' ч ' + (mins % 60) + ' мин</span></div>' +
+        '<div class="fav-day-body">' + slotsHtml(dayEvents, conflicts) + '</div></section>';
+    });
     return html;
   }
 
@@ -511,7 +525,7 @@
 
   function openIcsModal(list) {
     icsBody.innerHTML =
-      '<h2 class="m-title" id="ics-title">Все выбранные — в Google Calendar</h2>' +
+      '<h2 class="m-title" id="ics-title">Добавить выбранные в календарь</h2>' +
       '<p style="font-size:14px;color:var(--muted)">Google Calendar не умеет добавлять много событий по одной ссылке, поэтому используем стандартный файл <b>.ics</b> — его понимают все календари.</p>' +
       '<ol class="ics-steps">' +
       '<li><button type="button" class="btn btn-primary" id="ics-download">' + icon('download') + ' Скачать .ics (' + list.length + ')</button></li>' +
@@ -680,7 +694,6 @@
     if (star) { e.preventDefault(); e.stopPropagation(); toggleSelected(star.getAttribute('data-star')); return; }
     var open = e.target.closest('[data-open]');
     if (open) { openEvent(open.getAttribute('data-open')); return; }
-    if (e.target.closest('#fav-ics')) { downloadICS(selectedEvents(), 'kmu2026-selected.ics'); toast('Файл .ics скачан'); return; }
     if (e.target.closest('#fav-gcal')) { openIcsModal(selectedEvents()); return; }
     if (e.target.closest('#fav-clear')) {
       if (confirm('Убрать все мероприятия из избранного?')) { state.selected = []; render(); }
