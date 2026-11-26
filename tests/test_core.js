@@ -1,4 +1,4 @@
-/* Node-тесты чистой логики планировщика: node tests/test_core.js */
+/* Node-тесты чистой логики: node tests/test_core.js */
 'use strict';
 const fs = require('fs');
 const path = require('path');

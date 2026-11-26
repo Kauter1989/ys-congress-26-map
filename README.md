@@ -65,7 +65,7 @@ python -m http.server 8080
 
 1. Создайте репозиторий и запушьте содержимое этой папки в ветку `main`:
    ```bash
-   git init && git add . && git commit -m "КМУ-2026 планировщик"
+   git init && git add . && git commit -m "КМУ-2026 - интерактивная деловая программа"
    git remote add origin https://github.com/<user>/<repo>.git
    git push -u origin main
    ```

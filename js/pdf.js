@@ -298,7 +298,7 @@
       doc.setLineWidth(0.2);
       doc.line(MX, 288, PAGE_W - MX, 288);
       setFont('normal', 7.5, MUTED);
-      doc.text('Неофициальный планировщик · источник: science-congress.com', MX, 292.5);
+      doc.text('КМУ-2026 · Интерактивная деловая программа · science-congress.com', MX, 292.5);
       doc.text('Стр. ' + i + ' из ' + n, PAGE_W - MX, 292.5, { align: 'right' });
     }
     return doc;

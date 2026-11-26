@@ -242,7 +242,7 @@
     var lines = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
-      'PRODID:-//KMU2026 Planner//Delovaya Programma//RU',
+      'PRODID:-//KMU2026//Interaktivnaya Delovaya Programma//RU',
       'CALSCALE:GREGORIAN',
       'METHOD:PUBLISH',
       'X-WR-CALNAME:' + icsEscape((meta && meta.title ? meta.title : 'КМУ-2026') + ' · Избранное'),
